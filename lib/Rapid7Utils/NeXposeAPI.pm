@@ -20,6 +20,7 @@ sub new
       @_                            #override the defaults
    }, "Rapid7Utils::NeXposeAPI";
    
+   $self->{'ua'}->ssl_opts( verify_hostname => 0 ); # not verifying the hostname is a security risk!
    $self->{'host'} = &escapeXML($self->{'host'});
    $self->{'port'} = &escapeXML($self->{'port'});
    $self->{'session-id'} = &escapeXML($self->{'session-id'});
