@@ -7,6 +7,6 @@ use Data::Dumper;
 use feature 'say';
 
 my $napi = new Rapid7Utils::NeXposeAPI ("host" => "localhost");
-say Dumper( $napi);
+#say Dumper( $napi);
 print STDERR $napi->login ("user-id" => "v4test", "password" => "buynexpose");
 print STDERR "Connecting to: $napi->{'host'}\n\n";

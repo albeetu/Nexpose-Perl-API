@@ -805,6 +805,36 @@ sub vulnerabilityDetails
    return $response->content;
 }
 
+sub vulnExceptListing
+{
+  my $self = shift;
+  my %parameters = @_;
+  my $status = &escapeXML ($parameters{'status'});
+  my $time_duration = &escapeXML ($parameters{'time-duration'});
+  my $xml = "<VulnerabilityExceptionListingRequest sync-id=\"$self->{'sync-id'}\" session-id=\"$self->{'session-id'}\"";
+
+  if ($status =~ m/^(Under Review|Approved|Rejected)$/)
+  {
+     $xml .= " status=\"$self->{'status'}\"";
+  }
+  if ($time_duration)
+  {
+     $xml .= " time_duration=\"$self->{'time-duration'}\"";
+  }
+  $xml .= " />";
+
+  print $xml;
+
+  my $response = sendXmlRequest ($self,$xml);
+  my $xmlResponse = XML::XPath->new(xml => $response->content);
+ 
+  if ($xmlResponse->findvalue('//XMLResponse/attribute::success') eq '0' ||
+      $xmlResponse->findvalue('//VulnerabilityExceptionListingResponse/attribute::success') eq '0'){ croak $response->content; };
+
+  return $response->content;   
+}  
+
+
 sub reportTemplateListing
 {
    my $self = shift;
@@ -2317,3 +2347,39 @@ L<XML::XPath>,
 L<Carp::Carp>
 
 =cut
+
+/*
+
+Vulnerability Exceptions
+
+vulnExceptListing
+  status
+  time-duration
+vulnExceptCreate
+  vuln-id
+  exception-id
+  submitter
+  reviewer
+  status
+  reason
+  scope
+  device-id
+  port-no
+  expiration-date
+  vuln-key
+vulnExceptResubmit
+  exception-id
+  reason
+  comment
+vulnExceptRecall
+  exception-id
+vulnExceptApprove
+  exception-id
+  comment
+vulnExceptReject
+  exception-id
+vulnExceptDelete
+  exception-id
+vulnExceptUpdateComment
+vulnExceptUpdateExpiry
+*/
