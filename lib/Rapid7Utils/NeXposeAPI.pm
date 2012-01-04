@@ -825,7 +825,7 @@ sub vulnExceptListing
 
   print $xml;
 
-  my $response = sendXmlRequest ($self,$xml);
+  my $response = sendXmlRequest12 ($self,$xml);
   my $xmlResponse = XML::XPath->new(xml => $response->content);
  
   if ($xmlResponse->findvalue('//XMLResponse/attribute::success') eq '0' ||
@@ -1284,6 +1284,28 @@ sub getURI
    {
       croak "\n\nRequest failed => " . $response->content . "\n\n";
    }
+   return $response;
+}
+
+sub sendXmlRequest12
+{
+   my $self = shift;
+   my $xml = shift;
+   my $uri = '/api/1.2/xml';
+   my $url;
+   if ($self->{'port'} == 443)
+   {
+      $url = 'https://' . $self->{'host'} . $uri;
+   }
+   else
+   {
+      $url = 'https://' . $self->{'host'} . ':' . $self->{'port'} . $uri;
+   }
+   my $request = HTTP::Request->new (POST => $url);
+   $request->content_type ('text/xml');
+   $request->content ($xml);
+   my $response = $self->{ua}->request ($request);
+
    return $response;
 }
 
